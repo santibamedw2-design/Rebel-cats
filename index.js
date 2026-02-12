@@ -60,27 +60,26 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update Main Player (with a slight fade effect)
             mainFrame.style.opacity = '0';
             setTimeout(() => {
-                // Completely recreate the iframe to force a fresh load (fixes GitHub Pages issues)
                 const parent = mainFrame.parentElement;
-                const newFrame = document.createElement('iframe');
+                const timestamp = new Date().getTime();
 
-                // Copy necessary attributes
-                newFrame.id = 'main-frame';
-                newFrame.src = `https://drive.google.com/file/d/${videoId}/preview`;
-                newFrame.allow = "autoplay; fullscreen";
-                newFrame.frameBorder = "0";
-                newFrame.style.transition = 'opacity 0.3s ease';
-                newFrame.style.opacity = '0';
+                // Aggressive reset: rewrite the parent innerHTML to force a clean player context
+                // This bypasses browser caching and security context sticking on GitHub Pages
+                parent.innerHTML = `
+                    <iframe id="main-frame" 
+                        src="https://drive.google.com/file/d/${videoId}/preview?t=${timestamp}" 
+                        allow="autoplay; fullscreen" 
+                        frameborder="0" 
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        style="opacity: 0; transition: opacity 0.3s ease;"></iframe>
+                `;
 
-                // Replace old frame
-                parent.replaceChild(newFrame, mainFrame);
+                // Re-bind the global mainFrame reference to the newly created element
+                mainFrame = document.getElementById('main-frame');
 
-                // Update reference
-                mainFrame = newFrame;
-
-                // Fade in
+                // Smooth fade-in
                 setTimeout(() => {
-                    newFrame.style.opacity = '1';
+                    mainFrame.style.opacity = '1';
                 }, 50);
             }, 300);
 
