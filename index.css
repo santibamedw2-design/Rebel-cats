@@ -82,6 +82,22 @@ body {
     color: #000;
 }
 
+/* Hide custom cursor on touch devices (no mouse) */
+@media (hover: none) and (pointer: coarse) {
+
+    .cursor,
+    .cursor-follower {
+        display: none !important;
+    }
+
+    body,
+    a,
+    button,
+    .grid-item {
+        cursor: auto !important;
+    }
+}
+
 /* Noise overlay */
 .noise-overlay {
     position: fixed;
