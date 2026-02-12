@@ -60,7 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update Main Player (with a slight fade effect)
             mainFrame.style.opacity = '0';
             setTimeout(() => {
-                mainFrame.src = `https://drive.google.com/file/d/${videoId}/preview?autoplay=1`;
+                // Removed ?autoplay=1 because it might cause infinite loading on some mobile browsers
+                mainFrame.src = `https://drive.google.com/file/d/${videoId}/preview`;
                 mainFrame.style.opacity = '1';
             }, 300);
 
