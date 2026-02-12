@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     reveals.forEach(reveal => revealObserver.observe(reveal));
 
     // Gallery Logic
-    const mainFrame = document.getElementById('main-frame');
+    let mainFrame = document.getElementById('main-frame');
     const activeTitle = document.getElementById('active-title');
     const activeDesc = document.getElementById('active-desc');
     const mainDownload = document.getElementById('main-download');
@@ -60,9 +60,28 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update Main Player (with a slight fade effect)
             mainFrame.style.opacity = '0';
             setTimeout(() => {
-                // Removed ?autoplay=1 because it might cause infinite loading on some mobile browsers
-                mainFrame.src = `https://drive.google.com/file/d/${videoId}/preview`;
-                mainFrame.style.opacity = '1';
+                // Completely recreate the iframe to force a fresh load (fixes GitHub Pages issues)
+                const parent = mainFrame.parentElement;
+                const newFrame = document.createElement('iframe');
+
+                // Copy necessary attributes
+                newFrame.id = 'main-frame';
+                newFrame.src = `https://drive.google.com/file/d/${videoId}/preview`;
+                newFrame.allow = "autoplay; fullscreen";
+                newFrame.frameBorder = "0";
+                newFrame.style.transition = 'opacity 0.3s ease';
+                newFrame.style.opacity = '0';
+
+                // Replace old frame
+                parent.replaceChild(newFrame, mainFrame);
+
+                // Update reference
+                mainFrame = newFrame;
+
+                // Fade in
+                setTimeout(() => {
+                    newFrame.style.opacity = '1';
+                }, 50);
             }, 300);
 
             // Update Metadata
